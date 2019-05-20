@@ -181,18 +181,14 @@ class liOS_Stemmer(StemmerI):
         if not self.rule_dictionary:
             self.parseRules()
 
-        return self.__doStemming(word, intact_word)
+        return self.__init_stem(word, intact_word)
     
-    def __doStemming(self, word, intact_word):
-        """Perform the actual word stemming
-        """
+    def __init_stem(self, word, intact_word):
+        """Perform the actual word stemming"""
 
         valid_rule = re.compile("^([a-z]+)(\*?)(\d)([a-z]*)([>\.]?)$")
-
         proceed = True
-
         while proceed:
-
             # Find the position of the last letter of the word to be stemmed
             last_letter_position = self.__getLastLetter(word)
 
@@ -202,7 +198,6 @@ class liOS_Stemmer(StemmerI):
                 or word[last_letter_position] not in self.rule_dictionary
             ):
                 proceed = False
-
             else:
                 rule_was_applied = False
 
@@ -247,10 +242,26 @@ class liOS_Stemmer(StemmerI):
                 if rule_was_applied == False:
                     proceed = False
         return word
+    
+    def __isAcceptable(self, word, remove_total):
+        """Determine if the word is acceptable for stemming."""
+        word_is_acceptable = False
+        # If the word starts with a vowel, it must be at least 2
+        # characters long to be stemmed
+        if word[0] in "aeiouy":
+            if len(word) - remove_total >= 2:
+                word_is_acceptable = True
+        # If the word starts with a consonant, it must be at least 3
+        # characters long (including one vowel) to be stemmed
+        elif len(word) - remove_total >= 3:
+            if word[1] in "aeiouy":
+                word_is_acceptable = True
+            elif word[2] in "aeiouy":
+                word_is_acceptable = True
+        return word_is_acceptable
 
     def __getLastLetter(self, word):
-        """Get the zero-based index of the last alphabetic character in this string
-        """
+        """Get the zero-based index of the last alphabetic character in this string."""
         last_letter = -1
         for position in range(len(word)):
             if word[position].isalpha():
@@ -282,4 +293,4 @@ class liOS_Stemmer(StemmerI):
         return word
 
     def __repr__(self):
-        return '<LancasterStemmer>'
+        return '<liOS_Stemmer>'
