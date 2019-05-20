@@ -272,6 +272,10 @@ class liOS_Stemmer(StemmerI):
             "pico",
             "pseudo",
             "tera",
+            "anti",
+            "dis",
+            "ex",
+            "hyper",
         ):
             if word.startswith(prefix):
                 return word[len(prefix) :]
