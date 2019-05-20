@@ -270,6 +270,17 @@ class liOS_Stemmer(StemmerI):
                 break
         return last_letter
     
+    def __applyRule(self, word, remove_total, append_string):
+        """Apply the stemming rule to the given word."""
+        # Remove letters from the end of the word
+        new_word_length = len(word) - remove_total
+        word = word[0:new_word_length]
+
+        # And add new letters to the end of the truncated word
+        if append_string:
+            word += append_string
+        return word
+    
     def __stripPrefix(self, word):
         """Remove prefix from a word."""
         for prefix in (
