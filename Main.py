@@ -182,3 +182,100 @@ class liOS_Stemmer(StemmerI):
             self.parseRules()
 
         return self.__doStemming(word, intact_word)
+    
+    def __doStemming(self, word, intact_word):
+        """Perform the actual word stemming
+        """
+
+        valid_rule = re.compile("^([a-z]+)(\*?)(\d)([a-z]*)([>\.]?)$")
+
+        proceed = True
+
+        while proceed:
+
+            # Find the position of the last letter of the word to be stemmed
+            last_letter_position = self.__getLastLetter(word)
+
+            # Only stem the word if it has a last letter and a rule matching that last letter
+            if (
+                last_letter_position < 0
+                or word[last_letter_position] not in self.rule_dictionary
+            ):
+                proceed = False
+
+            else:
+                rule_was_applied = False
+
+                # Go through each rule that matches the word's final letter
+                for rule in self.rule_dictionary[word[last_letter_position]]:
+                    rule_match = valid_rule.match(rule)
+                    if rule_match:
+                        (
+                            ending_string,
+                            intact_flag,
+                            remove_total,
+                            append_string,
+                            cont_flag,
+                        ) = rule_match.groups()
+
+                        # Convert the number of chars to remove when stemming
+                        # from a string to an integer
+                        remove_total = int(remove_total)
+
+                        # Proceed if word's ending matches rule's word ending
+                        if word.endswith(ending_string[::-1]):
+                            if intact_flag:
+                                if word == intact_word and self.__isAcceptable(
+                                    word, remove_total
+                                ):
+                                    word = self.__applyRule(
+                                        word, remove_total, append_string
+                                    )
+                                    rule_was_applied = True
+                                    if cont_flag == '.':
+                                        proceed = False
+                                    break
+                            elif self.__isAcceptable(word, remove_total):
+                                word = self.__applyRule(
+                                    word, remove_total, append_string
+                                )
+                                rule_was_applied = True
+                                if cont_flag == '.':
+                                    proceed = False
+                                break
+                # If no rules apply, the word doesn't need any more stemming
+                if rule_was_applied == False:
+                    proceed = False
+        return word
+
+    def __getLastLetter(self, word):
+        """Get the zero-based index of the last alphabetic character in this string
+        """
+        last_letter = -1
+        for position in range(len(word)):
+            if word[position].isalpha():
+                last_letter = position
+            else:
+                break
+        return last_letter
+    
+    def __stripPrefix(self, word):
+        """Remove prefix from a word."""
+        for prefix in (
+            "kilo",
+            "micro",
+            "milli",
+            "intra",
+            "ultra",
+            "mega",
+            "nano",
+            "pico",
+            "pseudo",
+            "tera",
+        ):
+            if word.startswith(prefix):
+                return word[len(prefix) :]
+        return word
+
+    def __repr__(self):
+        return '<LancasterStemmer>'
