@@ -19,6 +19,7 @@ class StemmerI(object):
 
 class liOS_Stemmer(StemmerI):
     
+    # The rule list is static since it doesn't change between instances
     default_rule_tuple = (
         "ai*2.",  # -ia > -   if intact
         "a*1.",  # -a > -    if intact
@@ -136,3 +137,48 @@ class liOS_Stemmer(StemmerI):
         "zi2>",  # -iz > -
         "zy1s.",  # -yz > -ys
     )
+    
+    def __init__(self, rule_tuple=None, strip_prefix_flag=False):
+        """Create an instance of the Lancaster stemmer."""
+        # Setup an empty rule dictionary - this will be filled in later
+        self.rule_dictionary = {}
+        # Check if a user wants to strip prefix
+        self._strip_prefix = strip_prefix_flag
+        # Check if a user wants to use his/her own rule tuples.
+        self._rule_tuple = rule_tuple if rule_tuple else self.default_rule_tuple
+    
+    def parseRules(self, rule_tuple=None):
+        """Validate the set of rules used in this stemmer.
+
+        If this function is called as an individual method, without using stem
+        method, rule_tuple argument will be compiled into self.rule_dictionary.
+        If this function is called within stem, self._rule_tuple will be used.
+        """
+        # If there is no argument for the function, use class' own rule tuple.
+        rule_tuple = rule_tuple if rule_tuple else self._rule_tuple
+        valid_rule = re.compile("^[a-z]+\*?\d[a-z]*[>\.]?$")
+        # Empty any old rules from the rule set before adding new ones
+        self.rule_dictionary = {}
+
+        for rule in rule_tuple:
+            if not valid_rule.match(rule):
+                raise ValueError("The rule {0} is invalid".format(rule))
+            first_letter = rule[0:1]
+            if first_letter in self.rule_dictionary:
+                self.rule_dictionary[first_letter].append(rule)
+            else:
+                self.rule_dictionary[first_letter] = [rule]
+    def stem(self, word):
+        """Stem a word using the Lancaster stemmer."""
+        # Lower-case the word, since all the rules are lower-cased
+        word = word.lower()
+        word = self.__stripPrefix(word) if self._strip_prefix else word
+
+        # Save a copy of the original word
+        intact_word = word
+
+        # If rule dictionary is empty, parse rule tuple.
+        if not self.rule_dictionary:
+            self.parseRules()
+
+        return self.__doStemming(word, intact_word)
