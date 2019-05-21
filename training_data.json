@@ -1,0 +1,24 @@
+{
+    "dataObjects": [
+        {"id":"", "class":"greeting", "sentence":"how are you?"},
+        {"id":"", "class":"greeting", "sentence":"how is your day?"},
+        {"id":"", "class":"greeting", "sentence":"good day"},
+        {"id":"", "class":"greeting", "sentence":"who are you?"},
+        {"id":"", "class":"greeting", "sentence":"how is it going today?"},
+        {"id":"", "class":"goodbye", "sentence":"have a nice day"},
+        {"id":"", "class":"goodbye", "sentence":"see you later"},
+        {"id":"", "class":"goodbye", "sentence":"have a nice day"},
+        {"id":"", "class":"goodbye", "sentence":"talk to you soon"},
+        {"id":"", "class":"goodbye", "sentence":"goodbye"},
+        {"id":"", "class":"food", "sentence":"make me a sandwich"},
+        {"id":"", "class":"food", "sentence":"can you make a sandwich?"},
+        {"id":"", "class":"food", "sentence":"having a sandwich today?"},
+        {"id":"", "class":"food", "sentence":"may i have a ham and cheese sandwich?"},
+        {"id":"", "class":"food", "sentence":"what's for lunch?"},
+        {"id":"", "class":"insult", "sentence":"who do i hate?"},
+        {"id":"", "class":"insult", "sentence":"you look weird"},
+        {"id":"", "class":"insult", "sentence":"you can't do that because you can't do a simple task"},
+        {"id":"", "class":"insult", "sentence":"dumb dumb"},
+        {"id":"", "class":"insult", "sentence":"idiot"}
+    ]
+}
